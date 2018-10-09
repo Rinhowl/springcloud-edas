@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>EDAS服务注册与发现，Spring Cloud实现</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="created" content="2018-10-09T10:43:01+0800"/>
+        <meta name="modified" content="2018-10-09T11:24:25+0800"/>
+        <meta name="tags" content="编程"/>
+        <meta name="last device" content="钟林豪的MacBook Pro"/>
+    </head>
+    <body>
+        <div class="note-wrapper">
+            <h1>EDAS服务注册与发现，Spring Cloud实现</h1>
+<p><span class='hashtag'>#编程</span></p>
+<br>
+<h4>前言</h4>
+<p>在使用Spring Cloud实现EDAS的服务注册与发现之前，必须先在阿里官网开通EDAS服务。</p>
+<br>
+<h4>一、创建服务提供方</h4>
+<br>
+<ol start="1"><li>创建一个名字叫做edas-provider的Spring Cloud工程，将如下的配置拷贝到pom.xml中。
+</li></ol>
+<br>
+<pre><code class='code-multiline' lang='xml'><span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">project </span><span class="sf_code_attr-name">xmlns</span><span class="sf_code_punctuation">="</span><span class="sf_code_attr-value">http://maven.apache.org/POM/4.0.0</span><span class="sf_code_punctuation">"</span><span class="sf_code_tag"> </span><span class="sf_code_namespace">xmlns:</span><span class="sf_code_attr-name">xsi</span><span class="sf_code_punctuation">="</span><span class="sf_code_attr-value">http://www.w3.org/2001/XMLSchema-instance</span><span class="sf_code_punctuation">"</span><span class="sf_code_tag"> </span><span class="sf_code_namespace">xsi:</span><span class="sf_code_attr-name">schemaLocation</span><span class="sf_code_punctuation">="</span><span class="sf_code_attr-value">http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd</span><span class="sf_code_punctuation">"&gt;</span>
+  <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">modelVersion</span><span class="sf_code_punctuation">&gt;</span>4.0.0<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">modelVersion</span><span class="sf_code_punctuation">&gt;</span>
+  <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>top.zhonglinhao<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+  <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>~edas~<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+  <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>0.0.1-SNAPSHOT<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>
+  
+  <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">parent</span><span class="sf_code_punctuation">&gt;</span>
+      <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>org.springframework.boot<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+      <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>spring-boot-starter-parent<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+      <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>1.5.8.RELEASE<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>
+      <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">relativePath</span><span class="sf_code_punctuation">/&gt;</span>
+  <span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">parent</span><span class="sf_code_punctuation">&gt;</span>
+  <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependencies</span><span class="sf_code_punctuation">&gt;</span>
+      <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+          <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>com.alibaba.cloud<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+          <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>spring-cloud-starter-~ans~<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+          <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>1.1.3<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>
+      <span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+      <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+          <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>com.alibaba.cloud<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+          <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>spring-cloud-~alibaba~-~edas~-starter<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+          <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>1.1.3<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>
+      <span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+  <span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependencies</span><span class="sf_code_punctuation">&gt;</span>
+  <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependencyManagement</span><span class="sf_code_punctuation">&gt;</span>
+      <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependencies</span><span class="sf_code_punctuation">&gt;</span>
+          <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+              <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>org.springframework.cloud<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+              <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>spring-cloud-dependencies<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+              <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>Dalston.SR4<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>
+              <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">type</span><span class="sf_code_punctuation">&gt;</span>~pom~<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">type</span><span class="sf_code_punctuation">&gt;</span>
+              <span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">scope</span><span class="sf_code_punctuation">&gt;</span>import<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">scope</span><span class="sf_code_punctuation">&gt;</span>
+          <span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+      <span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependencies</span><span class="sf_code_punctuation">&gt;</span>
+  <span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependencyManagement</span><span class="sf_code_punctuation">&gt;</span>
+<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">project</span><span class="sf_code_punctuation">&gt;</span></code></pre>
+<p><br></p>
+<ol start="2"><li>配置工程的配置文件。在application.properties文件中配置如下内容：
+</li></ol>
+<pre><code class='code-multiline' lang='properties'><span class="sf_code_comment">#应用名</span>
+<span class="sf_code_attr-name">spring.application.name</span><span class="sf_code_punctuation">=</span><span class="sf_code_attr-value">service-provider </span>
+<span class="sf_code_comment">#端口</span>
+<span class="sf_code_attr-name">server.port</span><span class="sf_code_punctuation">=</span><span class="sf_code_attr-value">18081</span>
+<span class="sf_code_comment">#配置阿里云账号的AccessKey、SecretKey，以及 EDAS 的命名空间信息，用于配置权限</span>
+<span class="sf_code_attr-name">alibaba.cloud.access-key</span><span class="sf_code_punctuation">=</span><span class="sf_code_attr-value">LTAI4Cwl19T9dEQR</span>
+<span class="sf_code_attr-name">alibaba.cloud.secret-key</span><span class="sf_code_punctuation">=</span><span class="sf_code_attr-value">Aky83W9nFoYDAp5n0KTTKT9HSyWdg2</span>
+<span class="sf_code_attr-name">alibaba.edas.namespace</span><span class="sf_code_punctuation">=</span><span class="sf_code_attr-value">cn-hangzhou</span></code></pre>
+<p><br></p>
+<ol start="3"><li>创建启动类。其中<code class='code-inline'>@EnableDiscoveryClient</code>注解用于注册服务。
+</li></ol>
+<br>
+<pre><code class='code-multiline' lang='java'><span class="sf_code_annotation">@SpringBootApplication</span>
+<span class="sf_code_annotation">@EnableDiscoveryClient</span>
+<span class="sf_code_keyword">public</span> <span class="sf_code_keyword">class</span> <span class="sf_code_class-name">ServerApplication</span> <span class="sf_code_punctuation">{</span>
+    <span class="sf_code_keyword">public</span> <span class="sf_code_keyword">static</span> <span class="sf_code_keyword">void</span> <span class="sf_code_function">main</span><span class="sf_code_punctuation">(</span>String<span class="sf_code_punctuation">[]</span> args<span class="sf_code_punctuation">)</span> <span class="sf_code_punctuation">{</span>
+        SpringApplication<span class="sf_code_punctuation">.</span><span class="sf_code_function">run</span><span class="sf_code_punctuation">(</span>ServerApplication<span class="sf_code_punctuation">.</span><span class="sf_code_keyword">class</span><span class="sf_code_punctuation">,</span> args<span class="sf_code_punctuation">);</span>
+    <span class="sf_code_punctuation">}</span>
+<span class="sf_code_punctuation">}</span></code></pre>
+<p><br></p>
+<ol start="4"><li>创建提供服务类。
+</li></ol>
+<br>
+<pre><code class='code-multiline' lang='java'><span class="sf_code_annotation">@RestController</span>
+<span class="sf_code_keyword">public</span> <span class="sf_code_keyword">class</span> <span class="sf_code_class-name">EchoController</span> <span class="sf_code_punctuation">{</span>
+    <span class="sf_code_annotation">@GetMapping</span><span class="sf_code_punctuation">(</span><span class="sf_code_string">"/echo/{string}"</span><span class="sf_code_punctuation">)</span>
+   <span class="sf_code_keyword">public</span> String <span class="sf_code_function">echo</span><span class="sf_code_punctuation">(</span><span class="sf_code_annotation">@PathVariable</span> String string<span class="sf_code_punctuation">)</span> <span class="sf_code_punctuation">{</span>
+       <span class="sf_code_keyword">return</span> string<span class="sf_code_punctuation">;</span><span class="sf_code_comment">//返回传入的字符串</span>
+   <span class="sf_code_punctuation">}</span>
+<span class="sf_code_punctuation">}</span></code></pre>
+<p><br></p>
+<ol start="5"><li>启动该工程项目，打开EDAS的控制台，查询service-provider可以在服务名列表看到该服务，点击详情可以查看ip和端口号。
+</li></ol>
+<br>
+<br>
+<h4>二、创建服务消费方</h4>
+<br>
+<ol start="1"><li>创建一个名为edas-consumer的spring cloud工程，将如下的配置拷贝到pom.xml文件中。
+</li></ol>
+<br>
+<p>因为这个工程需要演示FeignClient，所以添加了spring-cloud-starter-feign 的依赖。</p>
+<br>
+<pre><code class='code-multiline' lang='xml'><span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">project </span><span class="sf_code_attr-name">xmlns</span><span class="sf_code_punctuation">="</span><span class="sf_code_attr-value">http://maven.apache.org/POM/4.0.0</span><span class="sf_code_punctuation">"</span><span class="sf_code_tag"> </span><span class="sf_code_namespace">xmlns:</span><span class="sf_code_attr-name">xsi</span><span class="sf_code_punctuation">="</span><span class="sf_code_attr-value">http://www.w3.org/2001/XMLSchema-instance</span><span class="sf_code_punctuation">"</span><span class="sf_code_tag">
+	</span><span class="sf_code_namespace">xsi:</span><span class="sf_code_attr-name">schemaLocation</span><span class="sf_code_punctuation">="</span><span class="sf_code_attr-value">http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd</span><span class="sf_code_punctuation">"&gt;</span>
+	<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">modelVersion</span><span class="sf_code_punctuation">&gt;</span>4.0.0<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">modelVersion</span><span class="sf_code_punctuation">&gt;</span>
+	<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>top.zhonglinhao<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+	<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>~edas~-consumer<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+	<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>0.0.1-SNAPSHOT<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>
+
+	<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">parent</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>org.springframework.boot<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>spring-boot-starter-parent<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>1.5.8.RELEASE<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">relativePath </span><span class="sf_code_punctuation">/&gt;</span>
+	<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">parent</span><span class="sf_code_punctuation">&gt;</span>
+	<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependencies</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+			<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>com.alibaba.cloud<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+			<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>spring-cloud-starter-~ans~<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+			<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>1.1.3<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+			<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>com.alibaba.cloud<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+			<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>spring-cloud-~alibaba~-~edas~-starter<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+			<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>1.1.3<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+			<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>org.springframework.cloud<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+			<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>spring-cloud-starter-feign<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+	<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependencies</span><span class="sf_code_punctuation">&gt;</span>
+	<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependencyManagement</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependencies</span><span class="sf_code_punctuation">&gt;</span>
+			<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+				<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>org.springframework.cloud<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">groupId</span><span class="sf_code_punctuation">&gt;</span>
+				<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>spring-cloud-dependencies<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">artifactId</span><span class="sf_code_punctuation">&gt;</span>
+				<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>Dalston.SR4<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">version</span><span class="sf_code_punctuation">&gt;</span>
+				<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">type</span><span class="sf_code_punctuation">&gt;</span>~pom~<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">type</span><span class="sf_code_punctuation">&gt;</span>
+				<span class="sf_code_punctuation">&lt;</span><span class="sf_code_tag">scope</span><span class="sf_code_punctuation">&gt;</span>import<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">scope</span><span class="sf_code_punctuation">&gt;</span>
+			<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependency</span><span class="sf_code_punctuation">&gt;</span>
+		<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependencies</span><span class="sf_code_punctuation">&gt;</span>
+	<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">dependencyManagement</span><span class="sf_code_punctuation">&gt;</span>
+<span class="sf_code_punctuation">&lt;/</span><span class="sf_code_tag">project</span><span class="sf_code_punctuation">&gt;</span></code></pre>
+<p><br></p>
+<ol start="2"><li>配置工程的配置文件，在application.properties文件中配置如下内容：
+</li></ol>
+<br>
+<pre><code class='code-multiline' lang='properties'><span class="sf_code_attr-name">spring.application.name</span><span class="sf_code_punctuation">=</span><span class="sf_code_attr-value">service-consumer</span>
+<span class="sf_code_attr-name">server.port</span><span class="sf_code_punctuation">=</span><span class="sf_code_attr-value">18082</span>
+<span class="sf_code_attr-name">alibaba.cloud.access-key</span><span class="sf_code_punctuation">=</span><span class="sf_code_attr-value">LTAI4Cwl19T9dEQR</span>
+<span class="sf_code_attr-name">alibaba.cloud.secret-key</span><span class="sf_code_punctuation">=</span><span class="sf_code_attr-value">Aky83W9nFoYDAp5n0KTTKT9HSyWdg2</span>
+<span class="sf_code_attr-name">alibaba.edas.namespace</span><span class="sf_code_punctuation">=</span><span class="sf_code_attr-value">cn-hangzhou</span></code></pre>
+<p><br></p>
+<ol start="3"><li>创建启动类。其中，使用 @EnableFeignClients 注解是用来激活 FeignClient；添加 @LoadBalanced 注解将 RestTemplate 与 AsyncRestTemplate 与服务发现结合。
+</li></ol>
+<br>
+<pre><code class='code-multiline' lang='java'><span class="sf_code_annotation">@SpringBootApplication</span>
+<span class="sf_code_annotation">@EnableDiscoveryClient</span>
+<span class="sf_code_annotation">@EnableFeignClients</span>
+<span class="sf_code_keyword">public</span> <span class="sf_code_keyword">class</span> <span class="sf_code_class-name">ConsumerApplication</span> <span class="sf_code_punctuation">{</span>
+   <span class="sf_code_annotation">@LoadBalanced</span>
+   <span class="sf_code_annotation">@Bean</span>
+    <span class="sf_code_keyword">public</span> RestTemplate <span class="sf_code_function">restTemplate</span><span class="sf_code_punctuation">()</span> <span class="sf_code_punctuation">{</span>
+       <span class="sf_code_keyword">return</span> <span class="sf_code_keyword">new</span> <span class="sf_code_class-name">RestTemplate</span><span class="sf_code_punctuation">();</span>
+   <span class="sf_code_punctuation">}</span>
+   <span class="sf_code_annotation">@LoadBalanced</span>
+   <span class="sf_code_annotation">@Bean</span>
+   <span class="sf_code_keyword">public</span> AsyncRestTemplate <span class="sf_code_function">asyncRestTemplate</span><span class="sf_code_punctuation">(){</span>
+        <span class="sf_code_keyword">return</span> <span class="sf_code_keyword">new</span> <span class="sf_code_class-name">AsyncRestTemplate</span><span class="sf_code_punctuation">();</span>
+   <span class="sf_code_punctuation">}</span>
+   <span class="sf_code_keyword">public</span> <span class="sf_code_keyword">static</span> <span class="sf_code_keyword">void</span> <span class="sf_code_function">main</span><span class="sf_code_punctuation">(</span>String<span class="sf_code_punctuation">[]</span> args<span class="sf_code_punctuation">)</span> <span class="sf_code_punctuation">{</span>
+        SpringApplication<span class="sf_code_punctuation">.</span><span class="sf_code_function">run</span><span class="sf_code_punctuation">(</span>ConsumerApplication<span class="sf_code_punctuation">.</span><span class="sf_code_keyword">class</span><span class="sf_code_punctuation">,</span> args<span class="sf_code_punctuation">);</span>
+   <span class="sf_code_punctuation">}</span>
+<span class="sf_code_punctuation">}</span></code></pre>
+<p><br></p>
+<ol start="4"><li>创建Service接口。FeignClient 是一个将HTTP 转为 RPC 格式调用的客户端，所以需要在接口上添加<code class='code-inline'>@FeignClient</code>的注解，然后配置对应的 HTTP URL 地址及 HTTP 方法。
+</li></ol>
+<br>
+<pre><code class='code-multiline' lang='java'><span class="sf_code_annotation">@FeignClient</span><span class="sf_code_punctuation">(</span>name <span class="sf_code_operator">=</span> <span class="sf_code_string">"service-provider"</span><span class="sf_code_punctuation">)</span>
+<span class="sf_code_keyword">public</span> <span class="sf_code_keyword">interface</span> <span class="sf_code_class-name">EchoService</span><span class="sf_code_punctuation">{</span>
+   <span class="sf_code_annotation">@GetMapping</span><span class="sf_code_punctuation">(</span><span class="sf_code_string">"/echo/{str}"</span><span class="sf_code_punctuation">)</span>
+   String <span class="sf_code_function">echo</span><span class="sf_code_punctuation">(</span><span class="sf_code_annotation">@PathVariable</span><span class="sf_code_punctuation">(</span><span class="sf_code_string">"str"</span><span class="sf_code_punctuation">)</span> String str<span class="sf_code_punctuation">);</span>
+<span class="sf_code_punctuation">}</span></code></pre>
+<p><br></p>
+<ol start="5"><li>创建消费服务的Controller，供测试使用。
+</li></ol>
+<br>
+<pre><code class='code-multiline' lang='java'><span class="sf_code_annotation">@RestController</span>
+<span class="sf_code_keyword">public</span> <span class="sf_code_keyword">class</span> <span class="sf_code_class-name">TestController</span> <span class="sf_code_punctuation">{</span>
+     <span class="sf_code_annotation">@Autowired</span>
+     <span class="sf_code_keyword">private</span> RestTemplate restTemplate<span class="sf_code_punctuation">;</span>
+     <span class="sf_code_annotation">@Autowired</span>
+     <span class="sf_code_keyword">private</span> AsyncRestTemplate asyncRestTemplate<span class="sf_code_punctuation">;</span>
+     <span class="sf_code_annotation">@Autowired</span>
+     <span class="sf_code_keyword">private</span>  EchoService echoService<span class="sf_code_punctuation">;</span>
+     
+     <span class="sf_code_annotation">@GetMapping</span><span class="sf_code_punctuation">(</span><span class="sf_code_string">"/echo-rest/{str}"</span><span class="sf_code_punctuation">)</span>
+     <span class="sf_code_keyword">public</span> String <span class="sf_code_function">rest</span><span class="sf_code_punctuation">(</span><span class="sf_code_annotation">@PathVariable</span> String str<span class="sf_code_punctuation">)</span> <span class="sf_code_punctuation">{</span>
+         <span class="sf_code_keyword">return</span> restTemplate<span class="sf_code_punctuation">.</span><span class="sf_code_function">getForObject</span><span class="sf_code_punctuation">(</span><span class="sf_code_string">"http://service-provider/echo/"</span> <span class="sf_code_operator">+</span> str<span class="sf_code_punctuation">,</span> String<span class="sf_code_punctuation">.</span><span class="sf_code_keyword">class</span><span class="sf_code_punctuation">);</span>
+     <span class="sf_code_punctuation">}</span>
+     <span class="sf_code_annotation">@GetMapping</span><span class="sf_code_punctuation">(</span><span class="sf_code_string">"/echo-async-rest/{str}"</span><span class="sf_code_punctuation">)</span>
+     <span class="sf_code_keyword">public</span> String <span class="sf_code_function">asyncRest</span><span class="sf_code_punctuation">(</span><span class="sf_code_annotation">@PathVariable</span> String str<span class="sf_code_punctuation">)</span> <span class="sf_code_keyword">throws</span> Exception<span class="sf_code_punctuation">{</span>
+         ListenableFuture<span class="sf_code_operator">&lt;</span>ResponseEntity<span class="sf_code_punctuation">&lt;</span><span class="sf_code_generics">String</span><span class="sf_code_punctuation">&gt;</span><span class="sf_code_operator">&gt;</span> future <span class="sf_code_operator">=</span> asyncRestTemplate<span class="sf_code_punctuation">.</span>
+         <span class="sf_code_function">getForEntity</span><span class="sf_code_punctuation">(</span><span class="sf_code_string">"http://service-provider/echo/"</span><span class="sf_code_operator">+</span>str<span class="sf_code_punctuation">,</span> String<span class="sf_code_punctuation">.</span><span class="sf_code_keyword">class</span><span class="sf_code_punctuation">);</span>
+         <span class="sf_code_keyword">return</span> future<span class="sf_code_punctuation">.</span><span class="sf_code_function">get</span><span class="sf_code_punctuation">().</span><span class="sf_code_function">getBody</span><span class="sf_code_punctuation">();</span>
+     <span class="sf_code_punctuation">}</span>
+     
+     <span class="sf_code_annotation">@GetMapping</span><span class="sf_code_punctuation">(</span><span class="sf_code_string">"/echo-feign/{str}"</span><span class="sf_code_punctuation">)</span>
+     <span class="sf_code_keyword">public</span> String <span class="sf_code_function">feign</span><span class="sf_code_punctuation">(</span><span class="sf_code_annotation">@PathVariable</span> String str<span class="sf_code_punctuation">)</span> <span class="sf_code_punctuation">{</span>
+         <span class="sf_code_keyword">return</span> echoService<span class="sf_code_punctuation">.</span><span class="sf_code_function">echo</span><span class="sf_code_punctuation">(</span>str<span class="sf_code_punctuation">);</span>
+     <span class="sf_code_punctuation">}</span>
+<span class="sf_code_punctuation">}</span></code></pre>
+<p><br></p>
+<ol start="6"><li>启动该工程，使用postman进行接口调用测试。输入url：<a href="http://localhost:18082/echo-rest/hello">http://localhost:18082/echo-rest/hello</a>，返回：hello。调用成功。
+</li></ol>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+        </div>
+        <script type="text/javascript">
+            (function() {
+
+    var doc_ols = document.getElementsByTagName("ol");
+
+    for ( i=0; i<doc_ols.length; i++) {
+
+        var ol_start = doc_ols[i].getAttribute("start") - 1;
+        doc_ols[i].setAttribute("style", "counter-reset:ol " + ol_start + ";");
+
+    }
+
+})();
+        </script>
+        <style>
+            html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font:inherit;font-size:100%;vertical-align:baseline}html{line-height:1}ol,ul{list-style:none}table{border-collapse:collapse;border-spacing:0}caption,th,td{text-align:left;font-weight:normal;vertical-align:middle}q,blockquote{quotes:none}q:before,q:after,blockquote:before,blockquote:after{content:"";content:none}a img{border:none}article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section,summary{display:block}*{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}html{font-size:87.5%;line-height:1.57143em}html{font-size:14px;line-height:1.6em;-webkit-text-size-adjust:100%}body{background:#fcfcfc;color:#545454;text-rendering:optimizeLegibility;font-family:"AvenirNext-Regular"}a{color:#de4c4f;text-decoration:none}h1{font-family:"AvenirNext-Medium";color:#333;font-size:1.6em;line-height:1.3em;margin-bottom:.78571em}h2{font-family:"AvenirNext-Medium";color:#333;font-size:1.3em;line-height:1em;margin-bottom:.62857em}h3{font-family:"AvenirNext-Medium";color:#333;font-size:1.15em;line-height:1em;margin-bottom:.47143em}p{margin-bottom:1.57143em;hyphens:auto}hr{height:1px;border:0;background-color:#dedede;margin:-1px auto 1.57143em auto}ul,ol{margin-bottom:.31429em}ul ul,ul ol,ol ul,ol ol{margin-bottom:0px}ol li:before{content:counter(ol) ".";counter-increment:ol;color:#e06e73;text-align:right;display:inline-block;min-width:1em;margin-right:0.5em}b,strong{font-family:"AvenirNext-Bold"}i,em{font-family:"AvenirNext-Italic"}code{font-family:"Menlo-Regular"}.text-overflow-ellipsis{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sf_code_string,.sf_code_selector,.sf_code_attr-name,.sf_code_char,.sf_code_builtin,.sf_code_inserted{color:#D33905}.sf_code_comment,.sf_code_prolog,.sf_code_doctype,.sf_code_cdata{color:#838383}.sf_code_number,.sf_code_boolean{color:#0E73A2}.sf_code_keyword,.sf_code_atrule,.sf_code_rule,.sf_code_attr-value,.sf_code_function,.sf_code_class-name,.sf_code_class,.sf_code_regex,.sf_code_important,.sf_code_variable,.sf_code_interpolation{color:#0E73A2}.sf_code_property,.sf_code_tag,.sf_code_constant,.sf_code_symbol,.sf_code_deleted{color:#1B00CE}.sf_code_macro,.sf_code_entity,.sf_code_operator,.sf_code_url{color:#920448}.note-wrapper{max-width:46em;margin:0px auto;padding:1.57143em 3.14286em}.note-wrapper.spotlight-preview{overflow-x:hidden}u{text-decoration:none;background-image:linear-gradient(to bottom, rgba(0,0,0,0) 50%,#e06e73 50%);background-repeat:repeat-x;background-size:2px 2px;background-position:0 1.05em}s{color:#878787}p{margin-bottom:0.1em}hr{margin-bottom:0.7em;margin-top:0.7em}ul li{text-indent:-0.35em}ul li:before{content:"•";color:#e06e73;display:inline-block;margin-right:0.3em}ul ul{margin-left:1.25714em}ol li{text-indent:-1.45em}ol ol{margin-left:1.25714em}blockquote{display:block;margin-left:-1em;padding-left:0.8em;border-left:0.2em solid #e06e73}.todo-list ul{margin-left:1.88571em}.todo-list li{text-indent:-1.75em}.todo-list li:before{content:"";display:static;margin-right:0px}.todo-checkbox{text-indent:-1.7em}.todo-checkbox svg{margin-right:0.3em;position:relative;top:0.2em}.todo-checkbox svg #check{display:none}.todo-checkbox.todo-checked #check{display:inline}.todo-checkbox.todo-checked .todo-text{text-decoration:line-through;color:#878787}.code-inline{display:inline;background:white;border:solid 1px #dedede;padding:0.2em 0.5em;font-size:0.9em}.code-multiline{display:block;background:white;border:solid 1px #dedede;padding:0.7em 1em;font-size:0.9em;overflow-x:auto}.hashtag{display:inline-block;color:white;background:#b8bfc2;padding:0.0em 0.5em;border-radius:1em;text-indent:0}.hashtag a{color:#fff}.address a{color:#545454;background-image:linear-gradient(to bottom, rgba(0,0,0,0) 50%,#0da35e 50%);background-repeat:repeat-x;background-size:2px 2px;background-position:0 1.05em}.address svg{position:relative;top:0.2em;display:inline-block;margin-right:0.2em}.color-preview{display:inline-block;width:1em;height:1em;border:solid 1px rgba(0,0,0,0.3);border-radius:50%;margin-right:0.1em;position:relative;top:0.2em;white-space:nowrap}.color-code{margin-right:0.2em;font-family:"Menlo-Regular";font-size:0.9em}.color-hash{opacity:0.4}.ordered-list-number{color:#e06e73;text-align:right;display:inline-block;min-width:1em}.arrow svg{position:relative;top:0.08em;display:inline-block;margin-right:0.15em;margin-left:0.15em}.arrow svg #rod{stroke:#545454}.arrow svg #point{fill:#545454}mark{color:inherit;display:inline;padding:0.2em 0.5em;background-color:#fcffc0}img{max-width:100%;height:auto}
+
+        </style>
+    </body>
+</html>
